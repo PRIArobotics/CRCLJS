@@ -1,10 +1,10 @@
 {
-  "name": "crcl",
+  "name": "crcljs",
   "version": "1.0.0",
   "description": "CRCLJS documentation and reference implementation",
   "main": "module.mjs",
   "scripts": {
-    "test": "nyc mocha ./test",
+    "test": "nyc mocha ./test"
   },
   "repository": {
     "type": "git",
@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/PRIArobotics/CRCLJS#readme",
   "dependencies": {
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "chai": "^4.2.0",
