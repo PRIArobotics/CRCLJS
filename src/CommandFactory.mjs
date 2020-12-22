@@ -7,6 +7,8 @@ function Command(cmd, name, param, cid){
 
 function MoveTo(name, position, rotation, straight) {
     if (straight === undefined) straight = false;
+    position = position.map(e => _.round(e, 3))
+    rotation = rotation.map(e => _.round(e, 3))
     const poseMatrix = {
         "X": position[0],
         "Y": position[1],

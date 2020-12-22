@@ -24,6 +24,10 @@ export default class BufferedRobotInterface {
         this.callbacks.set(cid, {resolve: resolve, error:error})
     }
 
+    async connect(cmd){
+        throw new Error('Abstract Method.');
+    }
+
     async send(cmd){
         throw new Error('Abstract Method.');
     }
@@ -53,8 +57,11 @@ export default class BufferedRobotInterface {
     async receive(lines){
         for (const line of lines){
             const status = CRCLCommandStatus.fromJSON(line)
-            let dt = new Date().getTime() - this.sentTime.get(status.cid).getTime()
-            console.log(`Received: ${status.toString()} ${status.state === 'CRCL_Queued' ? dt + 'ms' : ''}`)
+            let time = ''
+            if (this.sentTime.has(status.cid) && status.state === 'CRCL_Queued'){
+                time = new Date().getTime() - this.sentTime.get(status.cid).getTime()+'ms'
+            }
+            console.log(`Received: ${status.toString()} ${time ? time : ''}`)
             if (status.state === 'CRCL_Queued' || status.state === 'CRCL_Working' ) {
                 // update status if newer
                 const oldstatus = this.sent.get(status.cid)
