@@ -9,9 +9,9 @@ export default class MultiRobotInterface{
         this.groupedQueue = []
     }
 
-    async addRobot(robotname, robot){
-        this.robots.set(robotname, robot)
-        this.robotNames.set(robot, robotname)
+    async addRobot(robot){
+        this.robots.set(robot.name, robot)
+        this.robotNames.set(robot, robot.name)
     }
 
     getRobotsList(){

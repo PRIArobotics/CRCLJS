@@ -7,15 +7,35 @@ const COMMAND_STATES = [QUEUED, WORKING, DONE]
 
 export default class RobotInterface {
 
-    constructor() {
+    constructor(robotConnection) {
+        this.robotConnection = robotConnection;
         this.callbacks = new Map()
+        this.robotConnection.on(this.name, (lines) => this.receive(lines))
     }
 
-    send(cmd){
-
+    connect(){
+        return this.robotConnection.connect()
     }
 
-    sendNow(cmd, promiseStates = COMMAND_STATES){
+    disconnect(){
+        return this.robotConnection.disconnect()
+    }
+
+    get connected(){
+        return this.robotConnection.connected
+    }
+
+    log(message){
+        console.log(`${this.name}: ${message}`)
+    }
+
+    get name() {
+        return this.robotConnection.name
+    }
+
+    send(cmd, promiseStates = COMMAND_STATES){
+        if (!this.connected) this.connect()
+        this.log(`Sending: ${cmd}`)
         const c = {error:[]}
         const result = promiseStates.map(state => {
             return new Promise((resolve, error) => {
@@ -24,7 +44,7 @@ export default class RobotInterface {
             });
         })
         this.callbacks.set(cmd.cid, c)
-        this.send(cmd)
+        this.robotConnection.emit(this.name, cmd.toJSON())
         return result
     }
 
