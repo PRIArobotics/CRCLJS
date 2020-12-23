@@ -1,8 +1,17 @@
+export const QUEUED = 'CRCL_Queued'
+export const WORKING = 'CRCL_Working'
+export const DONE = 'CRCL_Done'
+export const COMMAND_STATES = [QUEUED, WORKING, DONE]
+
 export class CRCLCommandStatus {
 
     static fromJSON(json) {
-        const cmd = JSON.parse(json)
-        return new CRCLCommandStatus(cmd.CommandState, cmd.CommandID, cmd.StatusID, cmd.StateDescription)
+        try {
+            const cmd = JSON.parse(json)
+            return new CRCLCommandStatus(cmd.CommandState, cmd.CommandID, cmd.StatusID, cmd.StateDescription)
+        } catch (e) {
+            console.error(`Could not parse CRCLCommandStatus '${json}': ${e.message}`);
+        }
     }
 
     constructor(state, cid, sid, sdescription) {

@@ -1,29 +1,31 @@
-import CRCLCommandStatus from "./CRCLCommandStatus.mjs";
+import CRCLCommandStatus, {DONE, QUEUED} from "./CRCLCommandStatus.mjs";
+import RobotInterface from "./RobotInterface.mjs";
 
-export default class BufferedRobotInterface {
+export default class BufferedRobotInterface extends RobotInterface {
 
     constructor(robotConnection, maxQueued = 5, maxSent = 1) {
+        super(robotConnection);
+        /*
         this.robotConnection = robotConnection
+
         this.queue = [] // list of commands to send in the future
         this.sent = new Map() // all sent commands with their newest status
         this.sentTime = new Map()
         this.maxQueued = maxQueued // maximum number of entries in the sent queue
         this.maxSent = maxSent
         this.sending = false; // currently sending?
-        this.callbacks = new Map()
+
+
+        this.sent = new Map()
         this.robotConnection.on(robotConnection.name, (line) => this.onData(line))
+        */
+
     }
 
-    schedule(cmds){
-        return new Promise((resolve, error) => {
-            this.queue.push(...cmds)
-            this.addCallback(resolve, error, cmds[cmds.length-1].cid)
-            this.sendNext()
-        });
-    }
 
+    /*
     addCallback(resolve, error, cid){
-        this.callbacks.set(cid, {resolve: resolve, error:error})
+        this.sent.set(cid, {resolve: resolve, error:error})
     }
 
     async sendNext(){
@@ -40,7 +42,7 @@ export default class BufferedRobotInterface {
             console.log(`Sending: ${c.cmd} (${c.cid})`);
             this.sent.set(c.cid, new CRCLCommandStatus('CRCL_Sent', c.cid, -1))
             this.sentTime.set(c.cid, new Date())
-            this.robotConnection.emit(this.robotConnection.name, c.toJSON());
+
         }
         this.sending = false
     }
@@ -62,17 +64,17 @@ export default class BufferedRobotInterface {
             this.sent.delete(status.cid)
             this.sentTime.delete(status.cid)
 
-            const callback = this.callbacks.get(status.cid)
-            this.callbacks.delete(status.cid)
+            const callback = this.sent.get(status.cid)
+            this.sent.delete(status.cid)
             if (callback) callback.resolve()
         } else {
             const error = 'Received invalid message:' + status.toString()
             console.log(error)
-            for (c of this.callbacks.values()) c.error(error)
+            for (c of this.sent.values()) c.error(error)
             await this.robotConnection.disconnect()
         }
         await this.sendNext()
-    }
+    }*/
 
     get name(){
         return this.robotConnection.name

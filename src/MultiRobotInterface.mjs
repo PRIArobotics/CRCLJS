@@ -37,6 +37,13 @@ export default class MultiRobotInterface{
         this.queue.push(...command.map(cmd => {return {robot: robot, cmd: cmd}}))
     }
 
+    renumberQueue(){
+        this.queue.forEach((e, i) => {
+            e.cmd = _.clone(e.cmd)
+            e.cmd.cid = i
+        })
+    }
+
     async groupQueue(){
         const group = d => d.reduce((r,c,i,a) =>
             (a[i].robot == (a[i-1] && a[i-1].robot)
@@ -49,7 +56,9 @@ export default class MultiRobotInterface{
     async printQueue(){
         console.log("GROUPED PLAN")
         for (const group of this.groupedQueue){
-            console.log(group.robot)
+            console.log()
+            console.log(group.robot + ' Subqueue')
+            console.log()
             group.cmds.forEach(cmd => console.log("  "+cmd))
         }
         console.log("")
@@ -61,8 +70,10 @@ export default class MultiRobotInterface{
         }
         console.log("PLAN EXECUTION")
         for (const group of this.groupedQueue){
-            console.log(group.robot)
+            console.log()
+            console.log(group.robot + ' Subqueue')
             group.cmds.forEach(cmd => console.log("  "+cmd))
+            console.log()
             await this.robots.get(group.robot).schedule(group.cmds)
         }
     }
