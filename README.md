@@ -1,4 +1,4 @@
-# CRCL
+# CRCLJS
 
 Specification and reference-implementation of the JSON-based PRIA-CRCL interface to control robots.
 
