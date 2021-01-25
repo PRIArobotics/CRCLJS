@@ -1,6 +1,6 @@
-import {CRCLCommand, CRCLCommandStatus} from 'crcljs';
 import Emitter from "component-emitter"
-import {DONE, QUEUED, WORKING} from "./CRCLCommandStatus.mjs";
+import CRCLCommandStatus, {DONE, QUEUED, WORKING} from "./CRCLCommandStatus.mjs";
+import CRCLCommand from "./CRCLCommand.mjs";
 
 export const DEFAULT_QUEUEING_TIME = 50
 export const DEFAULT_WORKING_TIME = 500
