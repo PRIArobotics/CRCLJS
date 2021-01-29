@@ -32,7 +32,9 @@ export default class RobotInterface {
         if (promiseStates.some(s => !COMMAND_STATES.includes(s))){
             throw new Error("Invalid promiseStates: "+promiseStates)
         }
-        if (!this.connected) this.connect()
+        if (!this.connected){
+            throw new Error("Socket disconnected")
+        }
         this.log(`Sending: ${cmd.toJSON()}`)
         const c = {reject:[], cmd: cmd}
         this.sent.set(cmd.cid, c)
