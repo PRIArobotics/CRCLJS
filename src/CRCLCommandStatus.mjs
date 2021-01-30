@@ -2,6 +2,7 @@ export const QUEUED = 'CRCL_Queued'
 export const WORKING = 'CRCL_Working'
 export const DONE = 'CRCL_Done'
 export const COMMAND_STATES = [QUEUED, WORKING, DONE]
+export const COMMAND_STATES_IDs = Object.fromEntries(COMMAND_STATES.map((e,i)=>[e,i]))
 
 export class CRCLCommandStatus {
 

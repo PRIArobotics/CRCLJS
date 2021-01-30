@@ -1,4 +1,4 @@
-import {CRCLCommand, RobotInterface, CRCLCommandStatus, BufferedRobotInterface} from 'crcljs';
+
 
 import assert from 'assert';
 import sinon from 'sinon';
@@ -6,6 +6,9 @@ import chai from 'chai';
 import MockRobotConnection from "../src/MockRobotConnection.mjs";
 import {DONE, QUEUED, WORKING} from "../src/CRCLCommandStatus.mjs";
 import _ from "lodash";
+import {BufferedRobotInterface, CRCLCommand, CRCLCommandStatus, RobotInterface} from "../module.mjs";
+import MockReorderedRobotConnection from "./MockReorderedRobotConnection.mjs";
+
 const {expect} = chai;
 
 export const TEST_QUEUEING_TIME = 10
@@ -30,6 +33,7 @@ describe('RobotInterfaceTest', function() {
     it('RobotInterfaceTest', async function() {
         const con = new MockRobotConnection('MockRobot', TEST_QUEUEING_TIME, TEST_WORKING_TIME)
         const ri = new RobotInterface(con)
+        await ri.connect()
 
         const c1 = new CRCLCommand('SetEndEffector',"Picking0",{"Setting": 0.0})
         const c2 = new CRCLCommand('SetEndEffector',"Picking1",{"Setting": 1.0})
@@ -40,35 +44,36 @@ describe('RobotInterfaceTest', function() {
         let [queued1, working1, done1] = (ri.send(c1));
         ({cmd, status} = await queued1);
         expect(cmd).to.be.equal(c1);
-        expect(status).to.be.deep.equal(new CRCLCommandStatus(QUEUED, 1, 0));
+        expect(status).to.be.deep.equal(new CRCLCommandStatus(QUEUED, c1.cid, 0));
 
         ({cmd, status} = await working1);
         expect(cmd).to.be.equal(c1);
-        expect(status).to.be.deep.equal(new CRCLCommandStatus(WORKING, 1, 1));
+        expect(status).to.be.deep.equal(new CRCLCommandStatus(WORKING, c1.cid, 1));
 
         ({cmd, status} = await done1);
         expect(cmd).to.be.equal(c1);
-        expect(status).to.be.deep.equal(new CRCLCommandStatus(DONE, 1, 2));
+        expect(status).to.be.deep.equal(new CRCLCommandStatus(DONE, c1.cid, 2));
 
         let [queued2, working2, done2] = (ri.send(c2));
         ({cmd, status} = await queued2);
         expect(cmd).to.be.equal(c2);
-        expect(status).to.be.deep.equal(new CRCLCommandStatus(QUEUED, 2, 0));
+        expect(status).to.be.deep.equal(new CRCLCommandStatus(QUEUED, c2.cid, 0));
 
         ({cmd, status} = await working2);
         expect(cmd).to.be.equal(c2);
-        expect(status).to.be.deep.equal(new CRCLCommandStatus(WORKING, 2, 1));
+        expect(status).to.be.deep.equal(new CRCLCommandStatus(WORKING, c2.cid, 1));
 
         ({cmd, status} = await done2);
         expect(cmd).to.be.equal(c2);
-        expect(status).to.be.deep.equal(new CRCLCommandStatus(DONE, 2, 2));
+        expect(status).to.be.deep.equal(new CRCLCommandStatus(DONE, c2.cid, 2));
 
         ri.disconnect()
     });
 
-    it('RobotInterfaceTest', async function() {
+    it('RobotInterfaceTest2', async function() {
         const con = new MockRobotConnection('MockRobot', TEST_QUEUEING_TIME, TEST_WORKING_TIME)
         const ri = new RobotInterface(con)
+        await ri.connect()
         const commands = [...Array(10).keys()].map((i) => new CRCLCommand('SetEndEffector',"Picking"+i,{"Setting": 1.0}))
         const startTime = new Date().getTime();
         const promises = commands.map(cmd => ri.send(cmd))
@@ -93,6 +98,7 @@ describe('RobotInterfaceTest', function() {
     it('BufferedRobotInterfaceTest', async function() {
         const con = new MockRobotConnection('MockRobot', TEST_QUEUEING_TIME, TEST_WORKING_TIME, true)
         const ri = new BufferedRobotInterface(con)
+        await ri.connect()
         const commands = [...Array(10).keys()].map((i) => new CRCLCommand('SetEndEffector',"Picking"+i,{"Setting": 1.0}))
 
         const startTime = new Date().getTime();
@@ -118,6 +124,46 @@ describe('RobotInterfaceTest', function() {
             expect(t1.queued).to.be.at.most(t2.received)
             expect(t1.done).to.be.at.most(t2.working)
         })
+        ri.disconnect()
+    });
+
+    it('ReorderedRobotInterfaceTest', async function() {
+        const con = new MockReorderedRobotConnection('MockRobot', TEST_QUEUEING_TIME, TEST_WORKING_TIME)
+        const ri = new RobotInterface(con)
+        await ri.connect()
+
+        const c1 = new CRCLCommand('SetEndEffector',"Picking0",{"Setting": 0.0})
+        const c2 = new CRCLCommand('SetEndEffector',"Picking1",{"Setting": 1.0})
+
+        let cmd = undefined;
+        let status = undefined;
+
+        let [queued1, working1, done1] = (ri.send(c1));
+        ({cmd, status} = await queued1);
+        expect(cmd).to.be.equal(c1);
+        expect(status).to.be.deep.equal(new CRCLCommandStatus(QUEUED, c1.cid, 0));
+
+        ({cmd, status} = await working1);
+        expect(cmd).to.be.equal(c1);
+        expect(status).to.be.deep.equal(new CRCLCommandStatus(WORKING, c1.cid, 1));
+
+        ({cmd, status} = await done1);
+        expect(cmd).to.be.equal(c1);
+        expect(status).to.be.deep.equal(new CRCLCommandStatus(DONE, c1.cid, 2));
+
+        let [queued2, working2, done2] = (ri.send(c2));
+        ({cmd, status} = await queued2);
+        expect(cmd).to.be.equal(c2);
+        expect(status).to.be.deep.equal(new CRCLCommandStatus(QUEUED, c2.cid, 0));
+
+        ({cmd, status} = await working2);
+        expect(cmd).to.be.equal(c2);
+        expect(status).to.be.deep.equal(new CRCLCommandStatus(WORKING, c2.cid, 1));
+
+        ({cmd, status} = await done2);
+        expect(cmd).to.be.equal(c2);
+        expect(status).to.be.deep.equal(new CRCLCommandStatus(DONE, c2.cid, 2));
+
         ri.disconnect()
     });
 });
