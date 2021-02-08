@@ -2,10 +2,11 @@ import CRCLCommandStatus, {COMMAND_STATES, COMMAND_STATES_IDs, DONE, QUEUED, WOR
 
 export default class RobotInterface {
 
-    constructor(robotConnection) {
+    constructor(robotConnection, maxQueued = 5) {
         this.robotConnection = robotConnection;
         this.sent = new Map()
         this.robotConnection.on(this.name, (line) => this.receive(line))
+        this.maxQueued = maxQueued
     }
 
     connect(){
@@ -79,15 +80,17 @@ export default class RobotInterface {
     }
 
     async schedule(cmds){
+        const doneQueue = []
+        for (let i = 0; i < this.maxQueued; i++) doneQueue.push(Promise.resolve())
         for (let i = 0; i < cmds.length; i++){
             const cmd = cmds[i]
-            if (i < cmds.length-1){
-                console.time('Queueing')
-                await this.send(cmd, [QUEUED])[0]
-                console.timeEnd('Queueing')
-            } else {
-                await this.send(cmd, [DONE])[0]
-            }
+            console.time('Queueing')
+            const [queued, done] = this.send(cmd, [QUEUED, DONE])
+            await queued
+            doneQueue.push(done)
+            await doneQueue.shift()
+            console.timeEnd('Queueing')
         }
+        await doneQueue.pop()
     }
 }

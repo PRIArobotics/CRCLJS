@@ -6,7 +6,7 @@ import chai from 'chai';
 import MockRobotConnection from "../src/MockRobotConnection.mjs";
 import {DONE, QUEUED, WORKING} from "../src/CRCLCommandStatus.mjs";
 import _ from "lodash";
-import {BufferedRobotInterface, CRCLCommand, CRCLCommandStatus, RobotInterface} from "../module.mjs";
+import {CRCLCommand, CRCLCommandStatus, RobotInterface} from "../module.mjs";
 import MockReorderedRobotConnection from "./MockReorderedRobotConnection.mjs";
 
 const {expect} = chai;
@@ -97,7 +97,7 @@ describe('RobotInterfaceTest', function() {
 
     it('BufferedRobotInterfaceTest', async function() {
         const con = new MockRobotConnection('MockRobot', TEST_QUEUEING_TIME, TEST_WORKING_TIME, true)
-        const ri = new BufferedRobotInterface(con)
+        const ri = new RobotInterface(con)
         await ri.connect()
         const commands = [...Array(10).keys()].map((i) => new CRCLCommand('SetEndEffector',"Picking"+i,{"Setting": 1.0}))
 

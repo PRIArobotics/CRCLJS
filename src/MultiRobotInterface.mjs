@@ -14,8 +14,30 @@ export default class MultiRobotInterface{
         this.robotNames.set(robot, robot.name)
     }
 
+    async removeRobot(robot){
+        if (_.isString(robot)) robot = this.robots.get(robot)
+        if (!this.robotNames.has(robot)) return false
+        this.robots.delete(robot.name)
+        this.robotNames.delete(robot)
+        this.queue = this.queue.filter(e => e.robot !== robot.name)
+        this.groupedQueue = this.groupedQueue.filter(e => e.robot !== robot.name)
+        // TODO Regrouping necessary
+    }
+
     getRobotsList(){
         return [...this.robots.values()]
+    }
+
+    getRobotNamesList(){
+        return this.getRobotsList().map(r => r.name)
+    }
+
+    getRobotName(robot){
+        return this.robotNames.get(robot)
+    }
+
+    getRobotByName(robotname){
+        return this.robots.get(robotname)
     }
 
     allConnected(){
