@@ -5,8 +5,9 @@ function Command(cmd, name, param, cid){
     return new CRCLCommand(cmd, name, param, cid)
 }
 
-function MoveTo(name, position, rotation, straight) {
+function MoveTo(name, position, rotation, straight, blending) {
     if (straight === undefined) straight = false;
+    if (blending === undefined) blending = false;
     position = position.map(e => _.round(e, 3))
     rotation = rotation.map(e => _.round(e, 3))
     const poseMatrix = {
@@ -17,7 +18,9 @@ function MoveTo(name, position, rotation, straight) {
         "B": rotation[1],
         "C": rotation[2],
     }
-    return Command("MoveTo", name, {"Straight": straight, "Pose": poseMatrix});
+    const cmd = Command("MoveTo", name, {"Straight": straight, "Pose": poseMatrix})
+    if (blending !== false) cmd.param["Blending"] = blending
+    return cmd;
 }
 
 function SetEndEffector(name, setting) {
