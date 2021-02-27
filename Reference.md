@@ -12,7 +12,7 @@ Convention of the order of the attribute keys has to be
 
 ### CRCLParam:
 
-1. `Pose` : object - target TCP position `X`, (`Y`), (`Z`), (`A`), (`B`), (`C`). The angles A,B,C are Euler angles in degrees: Fixed angles X-Y-Z (equivalent to rotating Z-Y-X euler angles, equivalent to Roll, Pitch, Yaw)
+1. `Pose` : object - target TCP position `X`, (`Y`), (`Z`), (`A`), (`B`), (`C`). The angles A,B,C are Euler angles in degrees: Fixed angles X-Y-Z (equivalent to rotating Z-Y-X euler angles, equivalent to Yaw, Pitch, Roll)
 2. (`Straight`) : boolean - if true, TCP stays in line between origin and target position, otherwise arbitrary trajectory (default).
 3. (`Blending`) : float - blending radius in [mm] to blend this movement with the next movement, no blending with 0 (default)
 
