@@ -1,0 +1,32 @@
+How To Kuka
+
+Einschalten
+
+Login per VNC:
+	addr: vnc://192.168.42.130:5900 
+	pw: kuka
+
+Login as Admin:
+	Robot-Icon (oben links) - "Konfiguration" - "Benutzergruppe" - "Administrator"
+	pw: kuka
+
+Select Project
+	Blaues Zahnrad (links) - "Öffnen" - "Knowdrift_Eric" anklicken - Aktivieren - "Ja" - "Ja" - "Alle OK"
+
+Ausführung Knowdrift Hauptprogramm
+	KRC:/R1/Knowdrift/Knowdrift_HP.src anwählen
+	(-> Top "S" Submitinterpreter wird angewählt)
+	Zustimmtaster
+	Play 
+
+
+DEBUG:
+
+Projekt R1/System/sps.sub oder sps.src
+Submit Interpreter S muss laufen
+
+Automatic/T1/T2 (T2 Zustimmtaster)
+
+Neues Tool: sps_gobal.dat:340 Grip_Database -> mit ToolData
+
+Roboter -> "Anzeige" -> "Variable" -> "Übersicht" - "anzeigen" (nur als Experte)
