@@ -121,7 +121,12 @@ describe('RobotInterfaceTest', function() {
             expect(t1.received).to.be.at.most(t1.queued)
             expect(t1.queued).to.be.at.most(t1.working)
             expect(t1.working).to.be.at.most(t1.done)
-            expect(t1.queued).to.be.at.most(t2.received)
+
+            expect(t1.received).to.be.at.most(t2.received)
+            expect(t1.queued).to.be.at.most(t2.queued)
+            expect(t1.working).to.be.at.most(t2.working)
+            expect(t1.done).to.be.at.most(t2.done)
+
             expect(t1.done).to.be.at.most(t2.working)
         })
         ri.disconnect()

@@ -1,4 +1,4 @@
-import CRCLCommandStatus, {COMMAND_STATES, COMMAND_STATES_IDs, DONE, QUEUED, WORKING} from "./CRCLCommandStatus.mjs";
+import CRCLCommandStatus, {COMMAND_STATES, COMMAND_STATES_IDs, DONE, WORKING, QUEUED} from "./CRCLCommandStatus.mjs";
 
 export default class RobotInterface {
 
@@ -85,8 +85,7 @@ export default class RobotInterface {
         for (let i = 0; i < cmds.length; i++){
             const cmd = cmds[i]
             console.time('Queueing')
-            const [queued, done] = this.send(cmd, [QUEUED, DONE])
-            await queued
+            const [done] = this.send(cmd, [DONE])
             doneQueue.push(done)
             await doneQueue.shift()
             console.timeEnd('Queueing')

@@ -4,7 +4,7 @@
   "description": "CRCLJS documentation and reference implementation",
   "main": "module.mjs",
   "scripts": {
-    "test": "nyc mocha ./test"
+    "test": "./node_modules/mocha/bin/mocha test/**/*Test.mjs --reporter spec"
   },
   "repository": {
     "type": "git",
