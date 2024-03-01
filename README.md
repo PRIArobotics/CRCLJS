@@ -1,6 +1,6 @@
 # CRCLJS
 
-Specification and Javascript implementation of the queued streaming robot motion interface CRCL-JS, an adapted minimal JSON-based version of [CRCL](https://github.com/ros-industrial/crcl/blob/master/doc/Reference.md). 
+Specification and Javascript implementation of the queued streaming robot motion interface CRCL-JS, an adapted minimal JSON-based version of [CRCL](https://github.com/usnistgov/crcl/blob/master/doc/Reference.md). 
 
 There are also two specific implementations:
 
